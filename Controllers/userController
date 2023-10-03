@@ -1,0 +1,39 @@
+const router = require('express').Router();
+
+const User = require('../Models/userModel');
+
+const bycrpt = require('bcrypt');
+
+const jwt = require ('jsonwebtoken');
+
+const encryptPassword = (password) => {
+    const encrypt = bycrpt.hashSynch(password,13);
+    console.log('ENCRYPT:', encrypt);
+}
+
+router.post('/signup', async (req, res)=> {
+    try {
+        const user = new User ({
+            userName: req.body.userame,
+            email: req.body.email,
+            password: req.body.password
+        })
+            const newUser = await user.save();  
+            res.status(200).json ({
+                message: 'Success! User Name Created!',
+                user: newUser
+            });
+    } catch (error) {
+        res.status(500).json({
+            ERROR: error.message
+        })
+    } })
+        
+    
+ 
+
+
+
+
+
+module.exports= router; 
