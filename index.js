@@ -16,7 +16,7 @@ app.use(express.json());
 
 
 
-app.get('/test', (req, res) => {
+app.get('/testing', (req, res) => {
     res.status(200).json({ message: "Server is accessible", port: process.env.PORT })
 });
 
