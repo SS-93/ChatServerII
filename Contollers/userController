@@ -11,21 +11,26 @@ const encryptPassword = (password) => {
     console.log('ENCRYPT:', encrypt);
   }
 
-
+// ? USER SIGNUP 
   router.post('/signup', async (req, res)=> {
-    try {
+
+    //   encryptPassword('myPassword')
+    //   encryptPassword('myPassword')
+    //   encryptPassword('new_password')
+      try {
 
         const user = new User ({
             userName: req.body.userName,
             email: req.body.email, 
-            password: req.body.password
+            password: bcrypt.hashSync(req.body.password, 13)
 
         });
 const newUser = await user.save();
 
 res.status(200).json ({
     user: newUser,
-    message: 'Success! User Created!'
+    message: 'Success! User Created!',
+    
 })
         
     } catch (err) {
@@ -34,7 +39,32 @@ res.status(200).json ({
         })
         
     }
-  })
+
+})
+    //? USER LOGIN 
+router.post('/login', async (req, res)=> {
+    try { 
+        const {email, password} = req.body;
+
+        const  user = await User.findone({email: email});
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!user) throw new Error ('Email or Password does not match')
+
+        if (!passwordMatch) throw new Error('Email or Password does not match');
+        
+        res.status( 200).json({
+            user,
+            message: "Succesful Login!"
+        })
+        
+    } catch (err) {
+        res.status(500).json
+        Error: err.message
+        
+    }
+})
 
 
 module.exports = router;

@@ -1,4 +1,4 @@
- SS
+ 
 const mongoose = require ('mongoose');
 
 const RoomSchema = new mongoose.Schema({
@@ -10,11 +10,11 @@ title: {
  description: {
     type: String,
     required: false,
- },
- messages: {
- type: Array
- },
- ownerId: Object.id  
+ }
+//  messages: {
+//  type: Array
+//  },
+//  ownerId: Object.id  
  
 });
 
@@ -23,29 +23,6 @@ title: {
 
 
 
-module.exports = mongoose.model ('User', UserSchema );
+module.exports = mongoose.model ('Room', RoomSchema );
 
-const mongose = require('mongoose');
 
-const RoomSchema = new mongoose.Schema({
-title: {
-    type: String, 
-    required: true,
-    unique: true
-},
-discription: {
-    type: String,
-    required: false, 
-},
-messages: {
-    type: Array
-},
-ownerID: {
-    type: Schema.types.ObjectId,
-    ref: "User"
-}
-
-});
-
-module.exports = mongoose.model('User', UserSchema);
- develop
