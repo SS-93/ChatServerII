@@ -47,29 +47,38 @@ res.status(200).json ({
 
 })
     //? USER LOGIN 
-router.post('/login', async (req, res)=> {
-    try { 
-        const {email, password} = req.body;
 
-        const  user = await User.findone({email: email});
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
+router.post ('/login', async function (req, res){
+    try {
+        const {email, password} = req.body
+       
+        const user = await User.findOne ({ email: email})
 
-        if (!user) throw new Error ('Email or Password does not match')
+        if(!user) throw new Error ('Email or Password does not match')
 
-        if (!passwordMatch) throw new Error('Email or Password does not match');
-        
-        res.status( 200).json({
-            user,
-            message: "Succesful Login!"
+        const token = jwt.sign ({ id: user._id}, process.env.JWT, {expiresIn: '1 day'})
+
+        const passwordMatch = await bcrypt.compare (password, user.password)
+
+        if (!passwordMatch )  throw new Error ('EMail or Password does not match');
+
+        res.status(200).json ({
+
+            user, 
+            message: 'Succesful Login',
+            token
         })
-        
     } catch (err) {
-        res.status(500).json
-        Error: err.message
+
+        res.status(500).json ({
+            ERROR: err.message
+        })
         
     }
 })
+
+
 
 
 module.exports = router;        
