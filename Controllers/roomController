@@ -5,6 +5,10 @@ const User = require('../Models/roomModel');
 const bycrpt = require('bcrypt');
 
 // const jwt = require ('jsonwebtoken');
+
+function errorResponse (res, err) {
+    res.status(500).json ({ERROR: err.message})
+}
 const Room = require('../Models/roomModel');
 
 const encryptPassword = (password) => {
@@ -31,9 +35,36 @@ router.post('/create', async (req, res)=> {
     } })
         
 
-    
+  
 
 
+    router.get('/oneroom/:id', async (req, res) => {
+        try {
+          const roomId = req.params.id;
+      
+          const room = await Room.findById(roomId);
+      
+          if (!room) {
+            return res.status(404).json({ error: 'Room not found' });
+          }
+      
+          res.status(200).json({ room });
+        } catch (err) {
+          errorResponse(res, err);
+        }
+      });
+      
 
+      router.get('/list', async (req, res) => {
+        try {
+            const rooms = await Room.find();
+            res.status(200).json ({rooms});
+
+            
+        } catch (err) {
+            errorResponse(res, err)
+            
+        }
+      })
 
 module.exports= router; 
