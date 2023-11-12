@@ -28,7 +28,8 @@ console.log(req.body)
         });
 const newUser = await user.save();
 
-const token = jwt.sign ({ id: newUser ['id']} , process.env.JWT , { expiresIn: '1 day' }) ;
+const token = jwt.sign({ id: newUser['_id'] }, process.env.JWT, { expiresIn: "1 day" });
+
 console.log(token)
 
 res.status(200).json ({

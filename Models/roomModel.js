@@ -10,12 +10,14 @@ title: {
  description: {
     type: String,
     required: false,
- }
+ },
 //  messages: {
 //  type: Array
 //  },
-//  ownerId: Object.id  
- 
+ owner: { type: String,
+    required: true
+// ownerID: Object.id  
+ }
 });
 
  
