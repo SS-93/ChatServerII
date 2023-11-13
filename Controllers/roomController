@@ -49,11 +49,11 @@ router.post('/create', async (req, res)=> {
           const singleroom = await Room.findOne({_id: req.params.id});
           const user = await User.findById (singleroom.owner)
       
-          if (!room) {
+          if (!singleroom) {
             return res.status(404).json({ error: 'Room not found' });
           }
       
-          res.status(200).json({ room });
+          res.status(200).json({ singleroom });
         } catch (err) {
           errorResponse(res, err);
         }
@@ -72,5 +72,43 @@ router.post('/create', async (req, res)=> {
             
         }
       })
+
+
+router.patch ('/:id', async (req, res)=> {
+   
+    try {
+
+        let _id = req.params.id
+        
+
+       let owner = req.user.id
+
+       console.log(_id);
+       console.log(owner)
+
+       let updatedInfo = req.body
+
+
+       const updated = await Room.findOneAndUpdate ({ _id, owner},  updatedInfo,
+        
+        {new: true });
+
+        if (!updated)
+
+        throw new Error ("Invalid Romm + User Combination ")
+
+     
+
+
+    //    res.send('Patch Endpoint')
+
+
+
+    res.status (200).json ({ message: `${updated._id} Updated!`, updated })
+} catch (err) {
+        errorResponse (res, err)
+        
+    }
+})
 
 module.exports= router; 
