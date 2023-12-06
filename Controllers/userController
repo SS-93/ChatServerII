@@ -1,39 +1,85 @@
-const router = require('express').Router();
+const router = require ("express").Router()
 
-const User = require('../Models/userModel');
+const User = require('../Models/userModel')
 
-const bycrpt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
-const jwt = require ('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 const encryptPassword = (password) => {
-    const encrypt = bycrpt.hashSynch(password,13);
+    const encrypt = bcrypt.hashSync(password, 13);
     console.log('ENCRYPT:', encrypt);
-}
+  }
 
-router.post('/signup', async (req, res)=> {
-    try {
+// ? USER SIGNUP 
+  router.post('/signup', async (req, res)=> {
+console.log(req.body)
+    //   encryptPassword('myPassword')
+    //   encryptPassword('myPassword')
+    //   encryptPassword('new_password')
+      try {
+
         const user = new User ({
-            userName: req.body.userame,
-            email: req.body.email,
-            password: req.body.password
-        })
-            const newUser = await user.save();  
-            res.status(200).json ({
-                message: 'Success! User Name Created!',
-                user: newUser
-            });
-    } catch (error) {
-        res.status(500).json({
-            ERROR: error.message
-        })
-    } })
-        
+            userName: req.body.userName,
+            email: req.body.email, 
+            password: bcrypt.hashSync(req.body.password, 13)
     
- 
+
+        });
+const newUser = await user.save();
+
+const token = jwt.sign({ id: newUser['_id'] }, process.env.JWT, { expiresIn: "1 day" });
+
+console.log(token)
+
+res.status(200).json ({
+    user: newUser,
+    message: 'Success! User Created!',
+    token
+    
+})
+        
+    } catch (err) {
+        res.status(500).json({
+            ERROR: err.message
+        })
+        
+    }
+
+})
+    //? USER LOGIN 
+
+
+router.post ('/login', async function (req, res){
+    try {
+        const {email, password} = req.body
+       
+        const user = await User.findOne ({ email: email})
+
+        if(!user) throw new Error ('Email or Password does not match')
+
+        const token = jwt.sign ({ id: user._id}, process.env.JWT, {expiresIn: '1 day'})
+
+        const passwordMatch = await bcrypt.compare (password, user.password)
+
+        if (!passwordMatch )  throw new Error ('EMail or Password does not match');
+
+        res.status(200).json ({
+
+            user, 
+            message: 'Succesful Login',
+            token
+        })
+    } catch (err) {
+
+        res.status(500).json ({
+            ERROR: err.message
+        })
+        
+    }
+})
 
 
 
 
-
-module.exports= router; 
+module.exports = router;        

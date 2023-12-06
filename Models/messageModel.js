@@ -1,32 +1,29 @@
 const mongoose = require ('mongoose');
 
 const MessageSchema = new mongoose.Schema ({
- SS
 
-    date: {
-        type: Date,
-        required: true
 
-    date: {
-        type: Date,
-        rerquired: true,
- develop
-    },
     text: {
-        type: String,
-        required: true
-SS
+        type: String
+    }
 
-    },
+    // title: {
+    //     type: String,
+    //     required: true
 
-    owner: Object.id,
+  
+ 
+    // },
+    // description: {
+    //     type: String,
+    //     required: true
 
-    room: Object.id
+    // },
+
+    // owner: Object.id,
+
+    // room: Object.id
 })
 
-    },
-    owner: Object.id,
-
-
-});
- develop
+  
+module.exports = mongoose.model ('Message', MessageSchema );

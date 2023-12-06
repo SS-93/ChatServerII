@@ -1,0 +1,142 @@
+const router = require('express').Router();
+
+const User = require('../Models/userModel');
+
+const bycrpt = require('bcrypt');
+
+// const jwt = require ('jsonwebtoken');
+
+function errorResponse (res, err) {
+    res.status(500).json ({ERROR: err.message})
+}
+const Room = require('../Models/roomModel');
+
+const encryptPassword = (password) => {
+    const encrypt = bycrpt.hashSynch(password,13);
+    console.log('ENCRYPT:', encrypt);
+} 
+
+router.post('/create', async (req, res)=> {
+    try {
+        const room = new Room ({
+            title: req.body.title,
+            description: req.body.description,
+            // ownerID: Object.id
+            owner: req.user._id
+        });
+            const newRoom = await room.save();  
+            res.status(200).json ({
+                message: 'Success! New Room Created!',
+                room: newRoom
+            
+            });
+    } catch (error) {
+        res.status(500).json({
+            ERROR: error.message
+        })
+    } })
+        
+
+  
+
+
+    router.get('/one/:id', async (req, res) => {
+        
+        
+        try {
+        //   const roomId = req.params.id;
+      
+          const singleroom = await Room.findOne({_id: req.params.id});
+          const user = await User.findById (singleroom.owner)
+      
+          if (!singleroom) {
+            return res.status(404).json({ error: 'Room not found' });
+          }
+      
+          res.status(200).json({ singleroom });
+        } catch (err) {
+          errorResponse(res, err);
+        }
+      });
+      
+
+      router.get('/list', async (req, res) => {
+        try {
+            console.log('user:', req.user.id);
+            const rooms = await Room.find();
+            res.status(200).json ({rooms});
+
+            
+        } catch (err) {
+            errorResponse(res, err)
+            
+        }
+      })
+
+
+router.patch ('/:id', async (req, res)=> {
+   
+    try {
+
+        let _id = req.params.id
+        
+
+       let owner = req.user.id
+
+       console.log(_id);
+       console.log(owner)
+
+       let updatedInfo = req.body
+
+
+       const updated = await Room.findOneAndUpdate ({ _id, owner},  updatedInfo,
+        
+        {new: true });
+
+        if (!updated)
+
+        throw new Error ("Invalid Room + User Combination ")
+
+     
+
+
+    //    res.send('Patch Endpoint')
+
+
+
+    res.status (200).json ({ message: `${updated._id} Updated!`, updated })
+} catch (err) {
+        errorResponse (res, err)
+        
+    }
+}) 
+
+
+router.delete ('/:id', async function (req, res) {
+
+    try {
+
+        let { id}  = req.params;
+        let owner = req.user.id;
+
+        const deletedRoom = await Room.deleteOne ({_id: id, owner })
+
+        if (!deletedRoom.deletedCount) {
+            throw new Error ('could not find Room')
+        }
+
+
+
+res.status (200).json ({
+    message: 'Room Deleted!', 
+    deletedRoom
+})
+        
+    } catch (err) {
+        errorResponse (res, err)
+        
+    }
+}
+)
+
+module.exports= router; 
