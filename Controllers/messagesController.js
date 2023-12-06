@@ -19,7 +19,7 @@ router.post('/new', async (req,res ) => {
 
      const newMessage = new Message ({
         text
-        // room,
+        // room, add
         // owner
      });
      await newMessage.save()
